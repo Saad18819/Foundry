@@ -1,0 +1,239 @@
+// SPDX-License-Identifier: MIT
+
+// WE GONNA LEARN ABT FOUNDRY TEST CHEATCODES
+
+pragma solidity ^0.8.19;
+
+import {Test , console} from "forge-std/Test.sol";
+
+import {FundMe2} from "../src/FundMe2.sol";
+
+// we are adding this
+import {DeployFundMe3} from "../script/DeployFundMe3.s.sol";
+
+
+contract FundMeTest is Test{
+
+FundMe2 fundme;
+
+address USER = makeAddr("user");
+uint256 constant SEND_VALUE = 0.1 ether;// although we wrote it in decimal but compiler will convert into e type shit 
+uint256 constant STARTING_BALANCE = 10 ether;
+
+uint256 num = 1;
+
+modifier funded(){
+    vm.prank(USER);
+    fundme.fund{value:SEND_VALUE}();
+    _;
+}
+
+function setUp() external{
+DeployFundMe3 deployFundMe = new DeployFundMe3(); // this is just the blueprint of contract is made
+fundme = deployFundMe.run(); // here u are actually calling it
+vm.deal(USER,STARTING_BALANCE);
+num =2;
+}
+
+function testDemo() public{
+    console.log("Hello Ji");
+    assertEq(num , 2);
+}
+
+function testMinUsd() public{
+    assertEq(fundme.MINIMUM_USD() , 5e18);
+}
+
+function testOwner() public{
+   // assertEq(fundme.i_owner(),msg.sender);
+   assertEq(fundme.getOwner(),msg.sender);
+}
+
+function testgetVersion() public{
+    assertEq(fundme.getVersion() , 4);
+}
+
+
+// using cheatcodes thing
+
+function testRevertCheatCode() public{
+    vm.expectRevert(); // tells Foundry: "The VERY NEXT call must fail (revert). If it reverts, pass the test. If it succeeds, fail the test."
+    uint256 cat =1 ; //so basically test will fail or revert coz ye line fail nhi hui coz isme kuch issue nhi tha
+
+    // so basically if we want this test to pass so we goota write something after vm.expectRevert that line fail ho jaye which we did in next function
+
+}
+
+function testFundFailWithoutEnoughETH() public{
+    
+    vm.expectRevert();
+fundme.fund(); // it sends 0 value so ab ye line fail hoyegi coz of not enough fund isiliye test pass hoyega
+// fundme.fund() without attaching ETH passes 0 value. The require(..., "You need to spend more ETH!") guard inside FundMe2 fails and reverts. Since vm.expectRevert() expected a revert on that line, Foundry marks the test as PASSED.
+}
+
+
+// ab now basically u are updating value here so we gotta check in fund vala function ki array me value update hori kya so we go back to FundMe2.sol
+function testFundUpdatesFundedDataStructure() public{
+    
+    vm.prank(USER); // the next TX will be sent by user and inside vm.prank u have to pass address only
+    
+    fundme.fund{value:SEND_VALUE}();
+    // it doesnt mean we are kinda adding paramter here it means basically the value we are putting is to attach it to msg.value
+    // you only attach {value: ...} when the function expects ETH via msg.value (i.e. payable functions). You do not attach {value: ...} just because a function checks msg.sender.
+    uint256 amountFunded = fundme.getAddressToAmountFunded(USER);  // its too confusing whether it should be address(this) or msg.sender so we have another cheat code for this prank cheat code
+    assertEq(amountFunded ,SEND_VALUE);
+}
+
+
+function testAddsFunderToArrayOffFunders() public funded{
+   // vm.prank(USER);
+    // vm.prank(USER); $\rightarrow$ Instructs Foundry that the very next transaction will be initiated by USER instead of the test contract (address(this)).
+    // fundme.fund{value:SEND_VALUE}();
+    //fundme.fund{value: SEND_VALUE}(); $\rightarrow$ USER calls the fund() function in FundMe2.sol and attaches 0.1 ether (SEND_VALUE). Inside FundMe2.sol, this function pushes msg.sender (which is USER) into the s_funders array at index 0
+
+    address funder = fundme.getFunder(0);
+    // address funder = fundme.getFunder(0); $\rightarrow$ Calls the getter function getFunder(0) to read who is stored at index 0 of the funders array.
+  
+    assertEq(funder,USER);
+   //  assertEq(funder, USER); $\rightarrow$ Verifies that the address returned from index 0 matches USER. If it matches, the test passes.
+
+}
+
+function testOnlyOwnerCanWithdraw() public funded{
+    // vm.prank(USER);
+    // fundme.fund{value:SEND_VALUE}();
+
+    vm.expectRevert(); // basically it tells to revert the next line but if the next line is vm. stuff then it ignores it
+    vm.prank(USER);
+    fundme.withdraw();
+
+ // fundme.withdraw(); $\rightarrow$ USER tries to withdraw the contract's funds. But inside FundMe2.sol, there is a modifier or check requiring msg.sender == i_owner. Since USER is not the owner (the owner is msg.sender from DeployFundMe3), withdraw() reverts.   
+}
+
+function testWithDrawWithASingleFunder() public funded{
+  
+    // ARRANGE
+uint256 startingOwnerBalance = fundme.getOwner().balance;
+uint256 startingFundMeBalance = address(fundme).balance;
+
+    // ACT
+vm.prank(fundme.getOwner());
+fundme.withdraw();
+
+    // ASSERT
+    uint256 endingOwnerBalance = fundme.getOwner().balance;
+    uint256 endingFundMeBalance = address(fundme).balance;
+    assertEq(endingFundMeBalance , 0);
+    assertEq(startingFundMeBalance + startingOwnerBalance , endingOwnerBalance);
+}
+
+function testWithdrawfromMultipleFunders() public funded{
+   
+   // ARRANGE
+    uint160 numberOfFunders = 10;
+    uint256 startingFunderIndex = 2;
+
+ for(uint256 i=startingFunderIndex;i<numberOfFunders;i++){
+    // vm.prank new address
+    // vm.deal new address
+    // address(0)
+    hoax(address(uint160(i)),SEND_VALUE);
+    fundme.fund{value:SEND_VALUE}();
+    // fund the fundme
+ }
+
+uint256 startingOwnerBalance = fundme.getOwner().balance;
+uint256 startinFundMebalance = address(fundme).balance;
+
+// ACT
+vm.startPrank(fundme.getOwner());
+fundme.withdraw();
+vm.stopPrank();
+
+
+// ASSERT 
+assert(address(fundme).balance == 0 );
+assert(startinFundMebalance + startingOwnerBalance == fundme.getOwner().balance);
+
+
+}
+
+
+// also note that setup runs first everytime for each test function lik for example setup will run and then function test1 and then again setup and then test2 like that
+
+
+}
+
+/*
+FOUNDRY TEST CHEATCODES EXPLANATION
+
+1)search foundry on google and then open their website and go to cheatcode section and it will have many cheat codes wtih them
+2)also make  FundMe2.sol and DeployFundMe3.s.sol
+3)after writing this full code in terminal write
+4)forge test --mp test/FundMeTest4.t.sol
+5)forge coverage --match-test test/FundMeTest4.t.sol
+
+
+
+LOGIC BEHIND vm.prank() and vm.deal()
+
+When you write tests in Foundry, your test contract is the one executing all the lines of code.
+
+By default:
+
+The caller (msg.sender) inside your functions is the test contract's address (address(this)).
+
+Any new address you generate (like address USER = makeAddr("user")) is completely broke and has 0 ETH balance.
+
+Foundry gives you vm.prank and vm.deal so you can manipulate the blockchain environment to simulate real users.
+
+
+
+
+1. vm.deal — Giving ETH to an address
+
+What it does:
+Sets the ETH balance of any specified address to a number you choose. Think of it as "cheat-code minting" ETH into an account.
+
+When to use it:
+Whenever you create a fake user address (makeAddr("user")) that needs to send ETH or pay for transactions.
+
+Whenever you need to test scenarios where an account holds a specific ETH balance.
+
+
+
+
+2. vm.prank — Changing msg.sender
+What it does:
+Forces the very next transaction to be sent from the address you pass into vm.prank(...). It tricks the target contract into thinking that specific address called it.
+
+
+
+
+
+3. address USER = makeAddr("user");
+
+Yes, USER is a variable of type address that stores the generated address.
+
+The string "user" inside makeAddr("user") is a seed label used by Foundry to calculate and tag that address.
+Foundry takes the string "user", hashes it, and derives a unique 20-byte Ethereum address from that string.
+
+makeAddr("user") will always produce the exact same Ethereum address every time you run your test suite.
+
+makeAddr("alice") will produce a completely different address.
+
+ahh so we can write anything inside it rytt just based on what we write it will calculate mathemcatically some address
+
+
+
+
+
+
+
+
+
+
+
+
+
+ */

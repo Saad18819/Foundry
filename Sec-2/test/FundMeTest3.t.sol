@@ -49,6 +49,9 @@ function testgetVersion() public{
 4)now in function setup we did changes
 5)also in testowner replace address(this) with msg.sender
 6)and then in cmnd run the test to check "forge test --fork-url $SEPOLIA_RPC_URL" or mainnet or just "fork test" coz we have anvil with us and u will realise anvil works so fast like coz it doesnt have to do API call
+7)now onto FundMeTest4.t.sol
+
+
 
 
 
