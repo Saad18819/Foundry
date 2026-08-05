@@ -88,6 +88,10 @@ contract FundMe2Prac {
     function getAdd(uint256 index) external view returns(address){
        return funders[index];
     }
+
+    function getOwner() external view returns(address){
+        return i_owner;
+    }
 }
 
 // Concepts we didn't cover yet (will cover in later sections)

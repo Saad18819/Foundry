@@ -110,6 +110,11 @@ function testOnlyOwnerCanWithdraw() public funded{
  // fundme.withdraw(); $\rightarrow$ USER tries to withdraw the contract's funds. But inside FundMe2.sol, there is a modifier or check requiring msg.sender == i_owner. Since USER is not the owner (the owner is msg.sender from DeployFundMe3), withdraw() reverts.   
 }
 
+
+// NEXT 2 FUNCTIONS HAVE USED THE AAA METHOD(ARRANGE-ACT-ASSERT)
+
+
+
 function testWithDrawWithASingleFunder() public funded{
   
     // ARRANGE
@@ -126,6 +131,65 @@ fundme.withdraw();
     assertEq(endingFundMeBalance , 0);
     assertEq(startingFundMeBalance + startingOwnerBalance , endingOwnerBalance);
 }
+/*
+EXPLANATION
+
+This function tests the scenario where only one person has sent money to the contract, and then the owner withdraws all of it. We want to prove that:
+
+The contract balance drops to 0 ETH.
+
+All that money is transferred into the owner's wallet.
+
+
+
+
+Phase 1: ARRANGE (Setting up initial data)
+
+We take a "snapshot" of the bank balances before the withdrawal happens:
+
+We record how much ETH the contract owner has in their wallet (startingOwnerBalance).
+
+We record how much ETH is currently inside the FundMe2 contract (startingFundMeBalance, which is 0.1 ETH).
+
+
+
+
+
+Phase 2: ACT (Executing the operation)
+
+vm.prank(...) tells Foundry: "Pretend the owner is sending the next transaction."
+
+fundme.withdraw() triggers the withdrawal function inside FundMe2.sol.
+
+
+
+
+
+Phase 3: ASSERT (Verifying the math)
+
+
+We check if the final balances make mathematical sense:
+
+endingFundMeBalance must be 0 (all money was pulled out).
+
+The owner's new balance (endingOwnerBalance) must equal what they started with PLUS what was inside the contract.
+
+
+
+
+
+
+
+
+
+
+
+
+ */
+
+
+
+
 
 function testWithdrawfromMultipleFunders() public funded{
    
@@ -158,13 +222,82 @@ assert(startinFundMebalance + startingOwnerBalance == fundme.getOwner().balance)
 
 }
 
+/*
+EXPLANATION
 
-// also note that setup runs first everytime for each test function lik for example setup will run and then function test1 and then again setup and then test2 like that
+Phase 1: ARRANGE (Generating multiple fake users and funding)
+
+Why uint160? Ethereum addresses are 160 bits (20 bytes) long. In Solidity, to convert a number like 2 or 3 into a valid Ethereum address, it must be cast to uint160 first.
+
+Why start index at 2?
+
+Index 0 is often reserved for address(0) (null address).
+
+Index 1 is already used by USER in the funded modifier. So we start generating new addresses from 2 up to 9.
+
+
+
+
+
+Inside this for loop, we generate 8 new fake users (address(2), address(3), ... address(9)):
+
+
+hoax(address, value): 
+This is a combination cheatcode. 
+It does two things at once:
+vm.deal(address, SEND_VALUE) => Gives the fake address 0.1 ETH.
+vm.prank(address) => Sets msg.sender to that fake address for the next call.fundme.fund{value: SEND_VALUE}(): 
+The fake address sends 0.1 ETH into FundMe2.
+At the end of this loop, FundMe2 holds funds from 9 different users (1 from funded modifier + 8 from loop = 0.9 ETH total).
+
+
+
+
+
+Phase 2: ACT (Withdrawing with startPrank)
+
+Why vm.startPrank instead of vm.prank?
+
+vm.prank only applies to the very next transaction.
+
+vm.startPrank keeps msg.sender set as fundme.getOwner() for all subsequent transactions until you explicitly call vm.stopPrank().
+
+If your withdraw() function makes multiple calls or state changes under the hood, startPrank ensures the owner context persists throughout.
+
+You only need startPrank when a single user has to execute multiple transactions in a row: here just vm.prank would have worked as well properly 
+
+
+Phase 3: ASSERT (Verifying final balances)
+
+ssert(...): Standard Solidity assertion checking if the condition evaluates to true.
+
+It verifies that the FundMe2 contract balance was completely drained to 0, and the combined total was added to the owner's balance.
+
+
+
+
+
+
+
+
+
+
+ */
+
+
 
 
 }
 
+
+
 /*
+
+also note that setup runs first everytime for each test function lik for example setup will run and then function test1 and then again setup and then test2 like that
+
+
+
+
 FOUNDRY TEST CHEATCODES EXPLANATION
 
 1)search foundry on google and then open their website and go to cheatcode section and it will have many cheat codes wtih them
@@ -204,6 +337,8 @@ Whenever you need to test scenarios where an account holds a specific ETH balanc
 
 
 2. vm.prank — Changing msg.sender
+
+
 What it does:
 Forces the very next transaction to be sent from the address you pass into vm.prank(...). It tricks the target contract into thinking that specific address called it.
 
