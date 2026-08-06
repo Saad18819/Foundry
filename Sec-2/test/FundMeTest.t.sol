@@ -115,4 +115,5 @@ In Solidity, a public function can be called by outside users (like the Foundry 
 
 public functions are completely open. They can be called from the outside and they can also be called internally by the contract itself.
 
+
  */
