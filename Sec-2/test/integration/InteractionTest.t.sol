@@ -1,35 +1,50 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity ^0.8.19;
 
-import {Test , console} from "forge-std/Test.sol";
+import {Test, console} from "forge-std/Test.sol";
 import {FundMe4} from "../../src/FundMe4.sol";
 import {DeployFundMe5} from "../../script/DeployFundMe5.s.sol";
-import {FundFundMe} from "../../script/Interactions.s.sol";
+import {FundFundMe, WithdrawFundMe} from "../../script/Interactions.s.sol";
 
-contract InteractionsTest is Test{
+contract InteractionsTest is Test {
+    // 1. Declare state variables
+    FundMe4 fundMe;
 
-    function setUp() external{
+    address USER = makeAddr("user");
+    uint256 constant STARTING_BALANCE = 10 ether;
+
+    function setUp() external {
+        // 2. Fix deployment variable and assignment
         DeployFundMe5 deploy = new DeployFundMe5();
-        fundme = deployFundMe.run(); 
-        vm.deal(USER,STARTING_BALANCE);
+        fundMe = deploy.run(); 
+
+        vm.deal(USER, STARTING_BALANCE);
     }
 
-    function testUserCanFundInteraction() public{
-    FundFundMe fundFundMe = new FundFundMe();
-    fundFundMe.fundFundMe(address(fundMe));
+    function testUserCanFundInteraction() public {
+        FundFundMe fundFundMe = new FundFundMe();
+        fundFundMe.fundFundMe(address(fundMe));
 
-    address funder = fundMe.getFunder(0);
-    assertEq(funder , USER);
+        WithdrawFundMe withdrawFundMe = new WithdrawFundMe();
+        withdrawFundMe.withdrawFundMe(address(fundMe));
+
+        // 3. Fix capitalization (fundMe)
+        assert(address(fundMe).balance == 0);
     }
 }
-
 
 /*
 forge test --match-path test/integration/InteractionTest.t.sol --match-test testUserCanFundInteraction
 
+OR
 
-11:29
+forge test --match-path test/integration/InteractionTest.t.sol --match-test testUserCanFundInteraction -vvvv
+
+
+after this run
+
+
+
 
 
  */
