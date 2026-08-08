@@ -4,7 +4,7 @@ out = "out"
 libs = ["lib"]
 remappings = ["@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/"]
 # this tells to remap external library now whenever we see '@chainlink/contracts/ we will redirect it to after "equal sign" thing
-
+ffi = true
 
 
 
