@@ -13,4 +13,8 @@ deploy-sepolia:
 
 
 # in make file u need to circle ur env varibales
+# i have added etherscan api key and my private key from metamask to .env file
+# u can run this whole giant thing by just typing out "make deploy-sepolia"
 
+
+# in github repo of foundry go to make file and look at all the shortcits he has used
