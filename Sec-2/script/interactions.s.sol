@@ -18,18 +18,29 @@ function fundFundMe(address mostRecentlyDeployed) public {
     
     vm.startBroadcast();
     FundMe4(payable(mostRecentlyDeployed)).fund{value: SEND_VALUE}();
+    // FundMe4(mostRecentlyDeployed).fund{value: SEND_VALUE}();  this is rytt as well
+    // u generally write payable when that address of the contract is not payable so u casting to make it payable
     vm.stopBroadcast();
 
     console.log("Funded FundMe contract with %s", SEND_VALUE);
 }
 
+
  function run() external{
       
- address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment("FundMe", block.chainid);
+ address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment("FundMe4", block.chainid);
    vm.startBroadcast();
  fundFundMe(mostRecentlyDeployed);
     vm.stopBroadcast();
  }
+
+ /*
+ When you run forge script script/Interactions.s.sol:FundFundMe, Forge automatically searches for and runs the run() function.
+ DevOpsTools.get_most_recent_deployment(...): Reads your broadcast/ directory for the active network ID (block.chainid) and retrieves the address of the latest deployed contract matching the string passed into it.
+ 
+ 
+ 
+  */
 }
 
 
@@ -75,5 +86,25 @@ just to know how it works and how we can use it we keeping it ON for now
 3)in test make 2 new folder integration and unit
 and inside unit make test file 
 and we going with FundMeTest5.t.sol and DeployFundMe5.s.sol
+
+
+
+
+
+PROPER EXPLANATION
+
+FundFundMe contract is dedicated to sending ETH to your deployed FundMe4 contract.
+
+in Interactions.s.sol... it Finds an already deployed contract on the chain and calls a function on it (like fund() or withdraw()). 
+
+
+although it feels like this script and test thing are same but the main difference is  Interaction script runs on a real network whereas test runs on a temporary isolated local VM
+
+
+
+
+
+
+
 
  */

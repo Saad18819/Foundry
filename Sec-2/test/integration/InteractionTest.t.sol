@@ -41,7 +41,11 @@ OR
 forge test --match-path test/integration/InteractionTest.t.sol --match-test testUserCanFundInteraction -vvvv
 
 
-after this run
+PROPER EXPLANATION
+
+This integration test checks one big thing: "Can a user fund our contract using our script, and then can the owner withdraw that money using our withdrawal script?"
+
+
 
 
 
