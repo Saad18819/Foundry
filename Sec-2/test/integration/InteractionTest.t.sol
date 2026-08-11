@@ -45,6 +45,8 @@ PROPER EXPLANATION
 
 This integration test checks one big thing: "Can a user fund our contract using our script, and then can the owner withdraw that money using our withdrawal script?"
 
+This test file proves that your deployment, funding script, and withdrawal script all work together smoothly in an end-to-end simulation.
+
 
 
 
