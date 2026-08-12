@@ -25,6 +25,20 @@ lists all the remote servers (like GitHub) connected to your local repository, a
 10) git push -u origin main
 
 
+TO COPY SOMEONES CODE THEN U GOTTA PULL THIS CMND
+
+1) mkdir blahblah
+make a directory
+
+2) git clone "url"
+
+basically in that when u click on clone u will get the url
+
+
+
+
+
+
 
 
 in cmnd type "ls" to get all the files and folders present
