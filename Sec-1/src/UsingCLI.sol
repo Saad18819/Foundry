@@ -47,7 +47,7 @@ to view what number has been stored we will use
 EXAMPLE:   cast --to-base 0x000000000000000000000000000000000000000000000000000000000000007b dec
 
 
-so basically what it is actually that in remix after deployment we gut multiple button based on vuew or actually deployed so we use cast send if we are using orange vala button and use cast call if we using vuew typa shit
+so basically what it is actually that in remix after deployment we get multiple button based on view or actually deployed so we use cast send if we are using orange vala button and use cast call if we using vuew typa shit
 
 
 

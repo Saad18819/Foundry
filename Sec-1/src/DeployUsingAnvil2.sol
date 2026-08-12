@@ -30,6 +30,8 @@ the above will not bradcast the transaction to the anvil blockchain, it will jus
 so to broadcast the code to write in terminal is
 forge script script/DeploySimpleStorage.s.sol:DeploySimpleStorage --rpc-url http://127.0.0.1:8545 --broadcast --private-key <private key of the account that we want to use to deploy the contract (use anvil ki private key)>
 
+
+
 EXPLANATION OF THE COMMAND I WROTE IN THE TERMINAL TO DEPLOY THE CONTRACT
 
 forge script: This tells Foundry that you aren't just running a unit test or compiling code; you want to execute a deployment script file.

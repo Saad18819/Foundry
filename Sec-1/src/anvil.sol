@@ -6,7 +6,7 @@ Normally, to test a smart contract (a blockchain program), you would have to dep
 When you type " anvil" into your computer's terminal, it creates a fake, private, ultra-fast version of Ethereum that runs entirely inside your computer's memory.
 
 
-When you type anvil into your computer's terminal, it creates a fake, private, ultra-fast version of Ethereum that runs entirely inside your computer's memory.
+
 
 
 Deploying a smart contract locally using Anvil inside a Windows Subsystem for Linux (WSL) terminal is straightforward because Anvil treats WSL like a native Linux environment.
