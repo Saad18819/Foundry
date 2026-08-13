@@ -24,7 +24,7 @@ contract FundMe1 {
     AggregatorV3Interface private s_priceFeed;
 
 // reasons to make it private 1)gas optimization 2)clear external interface basically abi me show nhi hoga toh interface remains clear 
-// its simple if u make it public then under the hood it created some other cuntion which unnecessary use up the gas jab we know we dont wrequire public so avoid it
+// its simple if u make it public then under the hood it created some other functions which unnecessary use up the gas jab we know we dont wrequire public so avoid it
 
 
 

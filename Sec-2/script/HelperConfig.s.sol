@@ -182,6 +182,7 @@ A Mock BUILDS A BRAND NEW FAKE CONTRACT from scratch directly on Anvil using you
 
 
 1. What happens when you run a Fork?
+
 When you pass --fork-url <RPC_URL>, Anvil turns into a mirror of Sepolia or Mainnet:
 
 Anvil sends an API request to Alchemy/Infura: "Hey, fetch the bytecode and storage at 0x694AA176... on Sepolia."
@@ -277,8 +278,9 @@ EXPLANATION
 
 The problem is when u hardcode the address then u cant run that thing on other network soooo we need flexibility that why in helperconfig it checks which network u are runnin it grabs the price feed
 
-see the thing is its simple basically what actually happened is instead of harcoding address in helperconfig u write all the types of chainid u wanna run 
-so basically when u put the cmnd in terminal based on RPC url it ask what kind of chain ID it is and based on that it runs if-else thing
+see the thing is....
+its simple basically what actually happens is instead of harcoding address in helperconfig u write all the types of chainid u wanna run 
+so basically when u put the cmnd in terminal based on RPC url it asks what kind of chain ID it is and based on that it runs if-else thing
 HelperConfig hands that address back to your deployment script (DeployFundMe), which uses it to deploy your contract.
 
 */
