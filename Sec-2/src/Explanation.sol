@@ -22,6 +22,8 @@ foundry like solidity cant directly reach out to npm package repository and we n
 6)in terminal write  'forge install 'github repo link'@ version'      can check version from github repo
 forge install smartcontractkit/chainlink-brownie-contracts@1.3.0
 
+
+
 7)now when u open lib we can see forge-std library but can also see chainlink brownie thingy as well
 but now the issue is in Fundme.sol and PriceConverter.sol
 "import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";"

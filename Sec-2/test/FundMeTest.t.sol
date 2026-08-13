@@ -21,7 +21,7 @@ contract FundMeTest is Test{
 
 // first thing we wanna do is to test our fundme contract but before that we gotta deploy it ukk
 
-uint number = 1;
+uint256 number = 1;
 FundMe fundMe;
 
 
