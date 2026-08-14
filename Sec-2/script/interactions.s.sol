@@ -9,7 +9,8 @@ import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
 import {FundMe4} from "../src/FundMe4.sol";
 
 contract FundFundMe is Script{
-    
+  
+  
 uint256 constant SEND_VALUE = 0.01 ether;
 
 
@@ -104,7 +105,7 @@ although it feels like this script and test thing are same but the main differen
 
 
 
-see a basic conceptual que i had why we need interaction file when we already know integration test the entire ecosystem if its working fine or not if its wokring so we can deploy but but but see interaction file gives u the dummy experience of real netweork like for example before deploying it on main network u deploy it on testned type network to check how it will work in real netweork 
+see a basic conceptual que i had why we need interaction file when we already know integration test the entire ecosystem if its working fine or not if its wokring so we can deploy but but but see interaction file gives u the dummy experience of real netweork like for example before deploying it on main network u deploy it on testned type network to check how it will work in real netweork this iw what interaction file gives us
 
 
 
