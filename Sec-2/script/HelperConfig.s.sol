@@ -34,13 +34,14 @@ NetworkConfig public activeNetworkConfig;
 constructor(){
     if(block.chainid == 11155111){
         activeNetworkConfig = getSepoliaEthConfig();
-        // block.chainid  refers to chains current ID basically every network has their own chainID
+        // block.chainid refers to chains current ID basically every network has their own chainID
     } else if(block.chainid == 1) {
         activeNetworkConfig = getMainnetEthConfig();
     }else{
         activeNetworkConfig = getAnvilEthConfig();
     }
 }
+
 /*
 When Foundry runs this script, block.chainid automatically reflects the chain provided by your terminal command or RPC URL (--rpc-url). The constructor immediately runs and sets activeNetworkConfig to the right network.
 
@@ -92,6 +93,10 @@ function getAnvilEthConfig() public returns(NetworkConfig memory){
 if(activeNetworkConfig.priceFeed != address(0)){
     return activeNetworkConfig;
 }
+// If activeNetworkConfig.priceFeed is not equal to address(0), it means activeNetworkConfig has already been populated with a valid mock or real price feed address.
+// it simply means that its not equal to zero kinda its not empty something is already there basically u typecasted 0 to address to match with it
+
+
 
 /*
 
@@ -126,7 +131,8 @@ The if block triggers, returning the already-existing mock address immediately.
 
  */
 
-vm.startBroadcast(); // function cant be pure here
+vm.startBroadcast(); 
+// function cant be pure here
 // MockV3Aggregator mockPriceFeed = new MockV3aggregator(8,2000e8);
 MockV3Aggregator mockPriceFeed = new MockV3Aggregator(DECIMALS,INITIAL_PRICE);
 /*
@@ -276,7 +282,7 @@ There are no Chainlink price feeds, no Uniswap routers, no ERC-20 tokens, and no
 /*
 EXPLANATION
 
-The problem is when u hardcode the address then u cant run that thing on other network soooo we need flexibility that why in helperconfig it checks which network u are runnin it grabs the price feed
+The problem is when u hardcode the address then u cant run that thing on other network soooo we need flexibility thats why in helperconfig it checks which network u are runnin it grabs the price feed
 
 see the thing is....
 its simple basically what actually happens is instead of harcoding address in helperconfig u write all the types of chainid u wanna run 
