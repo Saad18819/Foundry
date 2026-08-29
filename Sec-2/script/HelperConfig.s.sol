@@ -132,7 +132,7 @@ The if block triggers, returning the already-existing mock address immediately.
  */
 
 vm.startBroadcast(); 
-// function cant be pure here
+// function cant be pure here bcz ur deploying contract here 
 // MockV3Aggregator mockPriceFeed = new MockV3aggregator(8,2000e8);
 MockV3Aggregator mockPriceFeed = new MockV3Aggregator(DECIMALS,INITIAL_PRICE);
 /*
