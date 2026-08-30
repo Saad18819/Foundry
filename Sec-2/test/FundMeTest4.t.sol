@@ -246,7 +246,7 @@ Index 1 is already used by USER in the funded modifier. So we start generating n
 Inside this for loop, we generate 8 new fake users (address(2), address(3), ... address(9)):
 
 
-hoax(address, value): 
+hoax(address, value):
 This is a combination cheatcode. 
 It does two things at once:
 vm.deal(address, SEND_VALUE) => Gives the fake address 0.1 ETH.
